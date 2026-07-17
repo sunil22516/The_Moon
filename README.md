@@ -1,9 +1,8 @@
 
 <p align="center">
-  <img src="assets/logo.png" alt="Moon" width="160"/>
+  <img src="assets/logo.png" alt="Moon" width="300"/>
 </p>
 
-<h1 align="center">Moon</h1>
 
 > **The Discovery Layer for Music**
 
