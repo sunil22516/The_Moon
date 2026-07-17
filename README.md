@@ -1,7 +1,7 @@
 ![React Native](https://img.shields.io/badge/React%20Native-0.82-blue)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.116-green)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
-![License](https://img.shields.io/badge/License-MIT-yellow)
+![License](https://img.shields.io/badge/License-TBD-lightgrey)
 ![Status](https://img.shields.io/badge/Status-Active%20Development-purple)
 
 
