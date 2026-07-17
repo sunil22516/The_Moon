@@ -1,49 +1,103 @@
 import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import { StatusBar } from 'expo-status-bar';
 import { supabase } from './lib/supabase';
 
-import AuthScreen from './screens/AuthScreen';
-import FeedScreen from './screens/FeedScreen';
-import TrendingScreen from './screens/TrendingScreen';
-import UploadScreen from './screens/UploadScreen';
+import AuthScreen from './src/screens/AuthScreen';
+import FeedScreen from './src/screens/FeedScreen';
+import UploadScreen from './src/screens/UploadScreen';
+import KaraokeScreen from './src/screens/KaraokeScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
 
-const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const darkTheme = {
+  dark: true,
+  colors: {
+    background: '#0A0A0A',
+    card: '#0A0A0A',
+    text: '#FFFFFF',
+    border: '#222222',
+    primary: '#8B5CF6',
+    notification: '#EC4899',
+  },
+};
 
 export default function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
+    }).catch(() => {
+      // If Supabase isn't configured, skip auth for demo
+      setLoading(false);
     });
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
+
+    // Listen for auth changes
+    const { data: listener } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+      }
+    );
+
     return () => listener.subscription.unsubscribe();
   }, []);
 
-  if (loading) return null;
-  if (!session) return <AuthScreen />;
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#8B5CF6" />
+      </View>
+    );
+  }
+
+  // For demo: skip auth if Supabase isn't configured
+  const skipAuth = !session;
 
   return (
-    <NavigationContainer theme={{ dark: true, colors: { background: '#000', card: '#000', text: '#fff', border: '#222', primary: '#8b5cf6' } }}>
-      <StatusBar style="light" />
-      <Tab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarStyle: { backgroundColor: '#000', borderTopColor: '#222' },
-          tabBarActiveTintColor: '#8b5cf6',
-          tabBarInactiveTintColor: '#666',
-        }}
-      >
-        <Tab.Screen name="Feed" component={FeedScreen} />
-        <Tab.Screen name="Trending" component={TrendingScreen} />
-        <Tab.Screen name="Upload" component={UploadScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <GestureHandlerRootView style={styles.root}>
+      <StatusBar style="light" translucent />
+      <NavigationContainer theme={darkTheme}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+            cardStyle: { backgroundColor: '#0A0A0A' },
+            ...(Platform.OS === 'web'
+              ? { animationEnabled: false }
+              : {
+                  gestureEnabled: true,
+                  cardStyleInterpolator: ({ current }) => ({
+                    cardStyle: { opacity: current.progress },
+                  }),
+                }),
+          }}
+        >
+          <Stack.Screen name="Feed" component={FeedScreen} />
+          <Stack.Screen name="Upload" component={UploadScreen} />
+          <Stack.Screen name="Karaoke" component={KaraokeScreen} />
+          <Stack.Screen name="Profile" component={ProfileScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: '#0A0A0A',
+  },
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0A0A0A',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
