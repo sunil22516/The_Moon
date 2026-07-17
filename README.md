@@ -92,7 +92,8 @@ If you're interested in contributing, opening issues, or sharing ideas, we'd lov
 
 ## 👨‍💻 Team
 
-**Sunil Kumar**
-Founder and CEO
+**~Sunil**
+
+
 
 Built with ❤️ for music lovers like me.
