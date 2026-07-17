@@ -1,177 +1,89 @@
-# The_Moon
+![React Native](https://img.shields.io/badge/React%20Native-0.82-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.116-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
+![License](https://img.shields.io/badge/License-TBD-lightgrey)
+![Status](https://img.shields.io/badge/Status-Active%20Development-purple)
 
-**moonmusic.com**
 
-## Discovery Layer for Music
+# 🌙 Moon
 
-Music platforms are strong at search and catalog, but weak at discovery.  
-The_Moon is built to make music discovery feel like scrolling Reels:
+> **The Discovery Layer for Music**
 
-- One swipe
-- One song
-- Instant playback
+Discover music the way you discover videos.
 
-The goal is not to replace Spotify or YouTube Music.  
-The goal is to become the place where listeners discover what they will play next.
-
----
-
-## The Problem
-
-- Discovery on streaming platforms becomes repetitive.
-- Independent artists struggle to get visibility.
-- Viral songs often break first on short-form social apps, not music apps.
+Instead of searching through playlists, Moon lets you **scroll**, **discover**, and **fall in love** with your next favorite song.
 
 ---
 
-## Product Experience
+## 🎵 Why Moon?
 
-A vertical, infinite music feed where each card includes:
+Today's music platforms are built for **search**.
 
-- Artwork
-- Artist
-- Animated visualizer
-- Lyric snippets
-- Community reactions
-- Comments and sharing actions
+Moon is built for **discovery**.
 
-User actions:
-
-- ❤️ Like
-- 🔁 Replay
-- 💬 Comment
-- 📤 Share
-- ➕ Save
-- 👤 Follow artists
-- 👥 Follow friends
-
-Each interaction improves recommendations.
+Think of it as an infinite feed where every swipe introduces you to a new track, powered by community engagement and personalized recommendations.
 
 ---
 
-## Two Discovery Feeds
+## ✨ Features
 
-### 1) Global Feed
-
-Shows what is happening in music now:
-
-- Trending today / this week / this month
-- Rising artists
-- New releases
-- Genre trends
-
-Ranked by **engagement velocity** (not just raw play count).
-
-### 2) Personal Feed
-
-Prioritizes relevance:
-
-- Artists you follow
-- Songs your friends liked
-- Songs shared with you
-- Your listening and replay behavior
-
-Example signal: “4 of your friends replayed this song today.”
+- 🎧 Infinite vertical music feed
+- ❤️ Like & Save songs
+- 💬 Comments & Discussions
+- 📤 Share tracks instantly
+- 👥 Follow artists & friends
+- 🔥 Global Trending Feed
+- 🎯 Personalized Discovery Feed
+- 📊 Artist analytics *(coming soon)*
 
 ---
 
-## Artist Profiles & Analytics
+## 🚀 Tech Stack
 
-Artist profiles include:
-
-- Followers
-- Full catalog
-- Trending tracks
-- Audience demographics
-- Engagement analytics
-
-Early stage profiles are auto-generated from public YouTube metadata, with claiming/management added later.
-
-Why artists care:
-
-- Replay rate
-- Save rate
-- Completion rate
-- Share rate
-- Fastest growing cities and audience segments
+| Layer | Tech |
+|--------|------|
+| Mobile | React Native |
+| Backend | FastAPI |
+| Database | PostgreSQL |
+| Cache | Redis |
+| Playback | YouTube API |
+| Search | Elasticsearch *(planned)* |
 
 ---
 
-## MVP Rollout
+## 🛣️ Roadmap
 
-### Phase 1 (Validation)
-
-- No uploads
-- Index public YouTube music
-- Focus on UI quality, smooth scrolling, fast playback, and trending logic
-
-### Phase 2 (Social Discovery)
-
-- Accounts
-- Follow graph
-- Personal feed
-- Artist profiles
-
-### Phase 3 (Creator/Artist Tools)
-
-- Artist dashboard
-- Advanced analytics
-- Profile claiming
-- Promotion tools
-
-### Phase 4 (Direct Uploads)
-
-- Creator uploads after audience demand is proven
+- [x] Product Vision
+- [ ] Authentication
+- [ ] Music Feed
+- [ ] Recommendation Engine
+- [ ] User Profiles
+- [ ] Artist Profiles
+- [ ] Social Feed
+- [ ] AI Recommendations
+- [ ] Creator Dashboard
 
 ---
 
-## Initial Market
+## 🎯 Vision
 
-Start with highly engaged, trend-driven communities:
+We're not trying to replace Spotify.
 
-- Indian Hip-Hop
-- Desi Rap
-- Punjabi music
-
-Then expand into pop, indie, EDM, international hip-hop, K-pop, Latin, and Afrobeats.
+We're building **the place where people discover what they'll listen to next.**
 
 ---
 
-## Monetization
+## 🤝 Contributing
 
-### Consumer
+Moon is currently in active development.
 
-- Premium subscription
-- Ad-free experience
-- Advanced personalization
-
-### Artist
-
-- Audience analytics
-- Promotion tools
-- Sponsored discovery
-- Verified profiles
-
-### Industry
-
-- Label analytics
-- Trend prediction
-- Emerging artist intelligence
+If you're interested in contributing, opening issues, or sharing ideas, we'd love to hear from you.
 
 ---
 
-## Technical Direction
+## 👨‍💻 Team
 
-- **Frontend:** React Native
-- **Backend:** FastAPI or Node.js
-- **Data:** PostgreSQL + Redis
-- **Search (later):** Elasticsearch
-- **Playback (MVP):** YouTube API
-- **Recommendation engine:** Rule-based ranking first, ML later
+**Sunil Kumar**  
+Founder
 
----
-
-## Strategic Constraint
-
-The hardest long-term problem is playback rights and licensing.  
-YouTube-based playback can validate MVP discovery, but scaling to a standalone destination requires label/distributor/streaming-rights partnerships planned early.
+Built with ❤️ for music lovers.
