@@ -35,17 +35,6 @@ Think of it as an infinite feed where every swipe introduces you to a new track 
 
 ---
 
-## 🚀 Tech Stack
-
-| Layer | Tech |
-|--------|------|
-| Mobile | React Native |
-| Backend | FastAPI |
-| Database | PostgreSQL |
-| Cache | Redis |
-| Playback | YouTube API *(sourcing layer — licensing model under evaluation)* |
-| Search | Elasticsearch *(planned)* |
-
 ---
 
 ## 🧭 How we're building this
