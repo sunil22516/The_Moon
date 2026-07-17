@@ -1,8 +1,3 @@
-![React Native](https://img.shields.io/badge/React%20Native-0.82-blue)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.116-green)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
-![License](https://img.shields.io/badge/License-TBD-lightgrey)
-![Status](https://img.shields.io/badge/Status-Active%20Development-purple)
 
 <p align="center">
   <img src="assets/logo.png" alt="Moon" width="160"/>
@@ -34,7 +29,7 @@ Think of it as an infinite feed where every swipe introduces you to a new track 
 - 💬 Comments & discussions
 - 📤 Share tracks instantly
 - 👥 Follow artists & friends
-- 🌍 Global trending feed — today / this week / this month
+- 🌍 Global trending feed — today / this week / this month / this year
 - 🎯 Personal feed — what your friends and follows are into, right now
 - 📊 Artist analytics *(coming soon)*
 
@@ -96,6 +91,11 @@ Music is the wedge. Once the core discovery loop works, the same bones extend to
 ---
 
 ## 🤝 Contributing
+![React Native](https://img.shields.io/badge/React%20Native-0.82-blue)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.116-green)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-blue)
+![License](https://img.shields.io/badge/License-TBD-lightgrey)
+![Status](https://img.shields.io/badge/Status-Active%20Development-purple)
 
 Moon is currently in active development, launching small and closed on purpose.
 If you're interested in contributing, opening issues, or sharing ideas, we'd love to hear from you.
@@ -105,6 +105,6 @@ If you're interested in contributing, opening issues, or sharing ideas, we'd lov
 ## 👨‍💻 Team
 
 **Sunil Kumar**
-Founder
+Founder and CEO
 
-Built with ❤️ for music lovers.
+Built with ❤️ for music lovers like me.
