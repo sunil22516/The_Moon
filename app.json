@@ -8,8 +8,18 @@
     "splash": {
       "backgroundColor": "#000000"
     },
-    "assetBundlePatterns": ["**/*"],
-    "ios": { "supportsTablet": false },
-    "android": { "package": "com.moon.app" }
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false
+    },
+    "android": {
+      "package": "com.moon.app"
+    },
+    "plugins": [
+      "expo-asset",
+      "expo-status-bar"
+    ]
   }
 }
