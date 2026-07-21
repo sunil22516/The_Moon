@@ -9,9 +9,10 @@ import CommentSheet from '../components/CommentSheet';
 import SearchOverlay from '../components/SearchOverlay';
 import { useAudio } from '../hooks/useAudio';
 import { useSwipe } from '../hooks/useSwipe';
+import { supabase } from '../lib/supabase';
 import { DEMO_POSTS } from '../lib/demoData';
 
-export default function FeedPage() {
+export default function FeedPage({ user, session, demoMode = false, onNavigate, onLogout }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeTab, setActiveTab] = useState('home');
   const [showLyrics, setShowLyrics] = useState(false);
@@ -20,12 +21,69 @@ export default function FeedPage() {
   const [showSearch, setShowSearch] = useState(false);
   const [likedPosts, setLikedPosts] = useState({});
   const [isSeeking, setIsSeeking] = useState(false);
+  const [realPosts, setRealPosts] = useState([]);
+  const [loadingPosts, setLoadingPosts] = useState(false);
   const feedRef = useRef(null);
   const audio = useAudio();
 
-  const posts = activeTab === 'discover'
-    ? [...DEMO_POSTS].sort((a, b) => b.like_count - a.like_count)
-    : DEMO_POSTS;
+  // Fetch real posts from Supabase
+  const fetchPosts = useCallback(async (tab) => {
+    if (!supabase || demoMode) return;
+    setLoadingPosts(true);
+    try {
+      let query = supabase
+        .from('posts')
+        .select('*, user:profiles(id, username, display_name, avatar_url)')
+        .eq('is_demo', false);
+
+      if (tab === 'discover') {
+        query = query.order('like_count', { ascending: false }).limit(50);
+      } else {
+        query = query.order('created_at', { ascending: false }).limit(50);
+      }
+
+      const { data, error } = await query;
+      if (!error && data) {
+        setRealPosts(data);
+      }
+    } catch (err) {
+      console.warn('Failed to fetch posts:', err);
+    }
+    setLoadingPosts(false);
+  }, [demoMode]);
+
+  // Fetch user's likes
+  const fetchLikes = useCallback(async () => {
+    if (!supabase || !user) return;
+    const { data } = await supabase
+      .from('likes')
+      .select('post_id')
+      .eq('user_id', user.id);
+    if (data) {
+      const map = {};
+      data.forEach(l => { map[l.post_id] = true; });
+      setLikedPosts(map);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    fetchPosts(activeTab);
+    fetchLikes();
+  }, [activeTab, fetchPosts, fetchLikes]);
+
+  // Merge real posts with demo posts as fallback
+  const posts = (() => {
+    const demoPosts = DEMO_POSTS.map(p => ({
+      ...p,
+      user: p.user || { id: p.user?.id, username: p.user?.username, display_name: p.user?.display_name, avatar_url: null },
+    }));
+
+    if (demoMode || realPosts.length === 0) {
+      return demoPosts;
+    }
+    // Real posts first, then demo posts labeled as samples
+    return [...realPosts, ...demoPosts];
+  })();
 
   const currentPost = posts[currentIndex];
 
@@ -87,21 +145,31 @@ export default function FeedPage() {
     if (feedRef.current) feedRef.current.scrollTop = 0;
   }, []);
 
-  // Like
-  const handleLike = useCallback((postId) => {
-    setLikedPosts(prev => ({ ...prev, [postId]: !prev[postId] }));
-  }, []);
+  // Like — real Supabase write
+  const handleLike = useCallback(async (postId) => {
+    const isLiked = likedPosts[postId];
+    // Optimistic update
+    setLikedPosts(prev => ({ ...prev, [postId]: !isLiked }));
 
-  const demoComments = [
-    { id: 'c1', user: { username: 'musicfan', display_name: 'Music Fan' }, content: 'This is absolutely fire 🔥', created_at: '2026-07-15T10:00:00Z' },
-    { id: 'c2', user: { username: 'beatmaker', display_name: 'BeatMaker' }, content: 'Love the vibes! Keep it up 💜', created_at: '2026-07-14T22:00:00Z' },
-    { id: 'c3', user: { username: 'producer.x', display_name: 'Producer X' }, content: 'The production on this is insane', created_at: '2026-07-13T16:00:00Z' },
-  ];
+    if (!supabase || !user) return;
+
+    try {
+      if (isLiked) {
+        await supabase.from('likes').delete().eq('post_id', postId).eq('user_id', user.id);
+      } else {
+        await supabase.from('likes').insert({ post_id: postId, user_id: user.id });
+      }
+    } catch (err) {
+      // Revert on error
+      setLikedPosts(prev => ({ ...prev, [postId]: isLiked }));
+      console.warn('Like failed:', err);
+    }
+  }, [likedPosts, user]);
 
   return (
     <div style={styles.root}>
       <TopBar
-        onProfilePress={() => {}}
+        onProfilePress={() => onNavigate?.('profile')}
         onSearchPress={() => setShowSearch(true)}
       />
 
@@ -156,7 +224,13 @@ export default function FeedPage() {
       <BottomNav
         activeTab={activeTab}
         onTabChange={handleTabChange}
-        onCreatePress={() => setShowCreate(true)}
+        onCreatePress={() => {
+          if (demoMode || !user) {
+            alert('Sign up to create posts!');
+            return;
+          }
+          setShowCreate(true);
+        }}
       />
 
       <LyricsSheet
@@ -170,19 +244,20 @@ export default function FeedPage() {
         visible={showCreate}
         onClose={() => setShowCreate(false)}
         onKaraoke={() => { setShowCreate(false); alert('Karaoke mode coming soon!'); }}
-        onUpload={() => { setShowCreate(false); alert('Upload coming soon!'); }}
+        onUpload={() => { setShowCreate(false); onNavigate?.('upload'); }}
       />
 
       <CommentSheet
         visible={showComments}
-        comments={demoComments}
+        postId={currentPost?.id}
+        userId={user?.id}
+        isDemo={currentPost?.is_demo}
         onClose={() => setShowComments(false)}
-        onSubmit={(text) => { console.log('Comment:', text); }}
       />
 
       <SearchOverlay
         visible={showSearch}
-        posts={DEMO_POSTS}
+        posts={posts}
         onClose={() => setShowSearch(false)}
         onSelectPost={(post) => {
           const idx = posts.findIndex(p => p.id === post.id);
@@ -201,32 +276,16 @@ export default function FeedPage() {
 
 const styles = {
   root: {
-    width: '100%',
-    height: '100vh',
-    background: 'var(--bg)',
-    position: 'relative',
-    overflow: 'hidden',
-    maxWidth: 480,
-    margin: '0 auto',
+    width: '100%', height: '100vh', background: 'var(--bg)',
+    position: 'relative', overflow: 'hidden', maxWidth: 480, margin: '0 auto',
   },
   feed: {
-    width: '100%',
-    height: '100vh',
-    overflowY: 'auto',
-    scrollSnapType: 'y mandatory',
-    WebkitOverflowScrolling: 'touch',
+    width: '100%', height: '100vh', overflowY: 'auto',
+    scrollSnapType: 'y mandatory', WebkitOverflowScrolling: 'touch',
   },
   cardWrapper: {
-    width: '100%',
-    height: '100vh',
-    scrollSnapAlign: 'start',
-    scrollSnapStop: 'always',
-    position: 'relative',
+    width: '100%', height: '100vh', scrollSnapAlign: 'start',
+    scrollSnapStop: 'always', position: 'relative',
   },
-  sidebarPos: {
-    position: 'absolute',
-    right: 8,
-    top: '38%',
-    zIndex: 10,
-  },
+  sidebarPos: { position: 'absolute', right: 8, top: '38%', zIndex: 10 },
 };
